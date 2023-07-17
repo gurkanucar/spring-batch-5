@@ -14,24 +14,6 @@ public class UserRowMapper implements RowMapper<User> {
     String username = rs.getString("username");
     int processed = rs.getInt("processed");
 
-    //        List<Address> addresses = new ArrayList<>();
-    //        do {
-    //            Long addressId = rs.getLong("address_id");
-    //            if (addressId != 0) {
-    //                String street = rs.getString("street");
-    //                String city = rs.getString("city");
-    //                String country = rs.getString("country");
-    //
-    //                Address address = new Address();
-    //                address.setId(addressId);
-    //                address.setStreet(street);
-    //                address.setCity(city);
-    //                address.setCountry(country);
-    //
-    //                addresses.add(address);
-    //            }
-    //        } while (rs.next() && userId.equals(rs.getLong("id")));
-
     User user = new User(userId, name, username, processed, null);
     return user;
   }

@@ -2,10 +2,15 @@ package com.gucardev.springbatch5.config;
 
 import com.gucardev.springbatch5.model.User;
 import com.gucardev.springbatch5.repository.UserRepository;
-import java.util.Iterator;
+
+import java.util.*;
+
 import org.springframework.batch.item.ItemReader;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
 
 // public class CustomReader implements ItemReader<String> {
@@ -62,46 +67,34 @@ import org.springframework.stereotype.Component;
 //  }
 // }
 
-public class CustomReader implements ItemReader<User> {
-  private final UserRepository userRepository;
-  private int pageIndex = 0;
-  private int pageSize = 5; // size of each chunk
-  private Iterator<User> currentPageIterator;
+import org.springframework.batch.item.ItemReader;
+import org.springframework.beans.factory.annotation.Autowired;
 
+import java.util.Iterator;
+import java.util.List;
+
+public class CustomReader implements ItemReader<List<User>> {
+  private UserRepository userRepository;
+  private int pageSize;
+  private int currentPage = 0;
+
+  // Constructor to inject dependencies
   public CustomReader(UserRepository userRepository) {
     this.userRepository = userRepository;
-    this.currentPageIterator = fetchNextPageIterator();
+    this.pageSize = 10;
   }
 
   @Override
-  public User read() throws Exception {
-    if (currentPageIterator == null) {
-      // No more data to read, the end of the input is reached
-      return null;
-    }
+  public List<User> read() {
+    // Calculate the offset based on the current page and page size
+    int offset = currentPage * pageSize;
 
-    if (!currentPageIterator.hasNext()) {
-      // Reached the end of the current page, fetch the next page
-      currentPageIterator = fetchNextPageIterator();
-      if (currentPageIterator == null) {
-        // No more data to read, the end of the input is reached
-        return null;
-      }
-    }
+    // Fetch a page of users from the repository
+    List<User> users =
+        userRepository.findByProcessed(1, PageRequest.of(offset, pageSize)).getContent();
 
-    User data = currentPageIterator.next();
-    System.out.println("Reading data - " + data);
-    return data;
-  }
+    currentPage++;
 
-  private Iterator<User> fetchNextPageIterator() {
-    Page<User> nextPage = userRepository.findAll(PageRequest.of(pageIndex, pageSize));
-    if (nextPage.hasContent()) {
-      pageIndex++;
-      return nextPage.iterator();
-    } else {
-      // No more data to read, the end of the input is reached
-      return null;
-    }
+    return users;
   }
 }
