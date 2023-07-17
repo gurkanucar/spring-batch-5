@@ -1,6 +1,6 @@
 spring:
   datasource:
-    url: jdbc:h2:mem:db
+    url: jdbc:h2:file:./db
     username: sa
     password:
     driverClassName: org.h2.Driver
@@ -13,3 +13,9 @@ spring:
   h2:
     console:
       enabled: true
+
+  batch:
+    job:
+      enabled: false
+    jdbc:
+      initialize-schema: always
