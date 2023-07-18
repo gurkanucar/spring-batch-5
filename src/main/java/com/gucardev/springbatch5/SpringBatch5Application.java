@@ -18,7 +18,7 @@ public class SpringBatch5Application implements CommandLineRunner {
 
   @Override
   public void run(String... args) throws Exception {
-    for (int i = 0; i < 30; i++) {
+    for (int i = 0; i < 33; i++) {
       userService.create(new User("name" + i, "@username" + i, Math.random() > 0.5 ? 0 : 1));
     }
   }
