@@ -12,6 +12,7 @@ public class CustomProcessor implements ItemProcessor<User, User> {
   public User process(User user) throws Exception {
     System.out.println("Processing data - " + user.getUsername());
     user.setUsername(user.getUsername() + "_UPD");
+    user.setProcessed(1);
     var addresses = getAddressForUser(user);
     user.setAddresses(addresses);
     return user;

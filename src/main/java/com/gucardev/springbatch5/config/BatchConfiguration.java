@@ -17,12 +17,15 @@ import org.springframework.batch.item.database.support.H2PagingQueryProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.transaction.PlatformTransactionManager;
 
 @RequiredArgsConstructor
 @Configuration
 public class BatchConfiguration {
   @Autowired private DataSource dataSource;
+
+  @Autowired private JdbcTemplate jdbcTemplate;
 
   @Bean
   Job createJob(
@@ -43,7 +46,7 @@ public class BatchConfiguration {
     return new StepBuilder("step", jobRepository)
         .<User, User>chunk(5, transactionManager)
         .allowStartIfComplete(true)
-        .reader(reader())
+        .reader(new CustomReader(jdbcTemplate))
         .processor(new CustomProcessor())
         .writer(new CustomWriter(userRepository))
         .build();
@@ -62,7 +65,7 @@ public class BatchConfiguration {
     H2PagingQueryProvider queryProvider = new H2PagingQueryProvider();
     queryProvider.setSelectClause("select u.id, u.name, u.username, u.processed");
     queryProvider.setFromClause("from USERS u");
-   // queryProvider.setWhereClause("u.processed = 0");
+    // queryProvider.setWhereClause("u.processed = 0");
     queryProvider.setSortKeys(sortKeys);
 
     reader.setQueryProvider(queryProvider);
