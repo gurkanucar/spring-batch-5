@@ -1,4 +1,4 @@
-package com.gucardev.springbatch5.config;
+package com.gucardev.springbatch5.config.comprehensive;
 
 import com.gucardev.springbatch5.model.User;
 import java.util.Arrays;
