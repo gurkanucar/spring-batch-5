@@ -18,38 +18,41 @@ import org.springframework.transaction.PlatformTransactionManager;
 @Slf4j
 public class MultistepConfig {
 
-    @Bean
-    public Job myJob(
-            JobRepository jobRepository, PlatformTransactionManager platformTransactionManager) {
-        return new JobBuilder("myJob", jobRepository)
-                .start(firstStep(jobRepository, platformTransactionManager))
-                .next(secondStep(jobRepository, platformTransactionManager))
-                .build();
-    }
-
-    public TaskletStep secondStep(
-            JobRepository jobRepository, PlatformTransactionManager platformTransactionManager) {
-        return new TaskletStepBuilder(new StepBuilder("secondStep", jobRepository))
-                .tasklet(
-                        (contribution, chunkContext) -> {
-                            log.info("##### second tasklet step");
-                            return RepeatStatus.FINISHED;
-                        },
-                        platformTransactionManager)
-                .build();
-    }
-
-    public Step firstStep(
-            JobRepository jobRepository, PlatformTransactionManager platformTransactionManager) {
-        return new StepBuilder("firstStep", jobRepository)
-                .tasklet(myTasklet(), platformTransactionManager)
-                .build();
-    }
-
-    public Tasklet myTasklet() {
-        return ((contribution, chunkContext) -> {
-            log.info("##### first tasklet step");
-            return RepeatStatus.FINISHED;
-        });
-    }
+  //    @Bean
+  //    public Job myJob(
+  //            JobRepository jobRepository, PlatformTransactionManager platformTransactionManager)
+  // {
+  //        return new JobBuilder("myJob", jobRepository)
+  //                .start(firstStep(jobRepository, platformTransactionManager))
+  //                .next(secondStep(jobRepository, platformTransactionManager))
+  //                .build();
+  //    }
+  //
+  //    public TaskletStep secondStep(
+  //            JobRepository jobRepository, PlatformTransactionManager platformTransactionManager)
+  // {
+  //        return new TaskletStepBuilder(new StepBuilder("secondStep", jobRepository))
+  //                .tasklet(
+  //                        (contribution, chunkContext) -> {
+  //                            log.info("##### second tasklet step");
+  //                            return RepeatStatus.FINISHED;
+  //                        },
+  //                        platformTransactionManager)
+  //                .build();
+  //    }
+  //
+  //    public Step firstStep(
+  //            JobRepository jobRepository, PlatformTransactionManager platformTransactionManager)
+  // {
+  //        return new StepBuilder("firstStep", jobRepository)
+  //                .tasklet(myTasklet(), platformTransactionManager)
+  //                .build();
+  //    }
+  //
+  //    public Tasklet myTasklet() {
+  //        return ((contribution, chunkContext) -> {
+  //            log.info("##### first tasklet step");
+  //            return RepeatStatus.FINISHED;
+  //        });
+  //    }
 }
